@@ -19,6 +19,7 @@ use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
 use snafu::Snafu;
 use std::{path::Path, pin::Pin};
+use tracing::Span;
 use tracing_futures::Instrument;
 
 use async_openai::{
@@ -276,6 +277,7 @@ pub trait Chat: Sync + Send {
     #[allow(deprecated)]
     async fn chat_stream(
         &self,
+        span: Span,
         req: CreateChatCompletionRequest,
     ) -> Result<ChatCompletionResponseStream, OpenAIError> {
         let model_id = req.model.clone();

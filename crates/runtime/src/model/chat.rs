@@ -32,6 +32,7 @@ use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tracing::Span;
 use tracing_futures::Instrument;
 
 use super::tool_use::ToolUsingChat;
@@ -320,14 +321,19 @@ impl Chat for ChatWrapper {
     /// ```
     async fn chat_stream(
         &self,
+        parent_span: Span,
         req: CreateChatCompletionRequest,
     ) -> Result<ChatCompletionResponseStream, OpenAIError> {
         let req = self.prepare_req(req)?;
+        tracing::info!(
+            "ChatWrapper::Chat chat_stream Staring new ai_completion span with parent: {:?}",
+            parent_span
+        );
         let span = tracing::span!(target: "task_history", tracing::Level::INFO, "ai_completion", stream=true, model = %req.model, input = %serde_json::to_string(&req).unwrap_or_default(),  "labels");
 
-        match self.chat.chat_stream(req).instrument(span.clone()).await {
+        match self.chat.chat_stream(span.clone(), req).await {
             Ok(resp) => {
-                let logged_stream = resp.instrument(span).inspect(|item| {
+                let logged_stream = resp.inspect(|item| {
                     if let Ok(item) = item {
                         // not incremental; provider only emits usage on last chunk.
                         if let Some(usage) = item.usage.clone() {

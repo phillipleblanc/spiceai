@@ -46,7 +46,7 @@ pub(crate) async fn post(
         match llms.read().await.get(&model_id) {
             Some(model) => {
                 if req.stream.unwrap_or_default() {
-                    match model.write().await.chat_stream(req).await {
+                    match model.write().await.chat_stream(span_clone.clone(), req).await {
                         Ok(strm) => {
                             create_sse_response(strm, time::Duration::from_secs(30), span_clone)
                         }

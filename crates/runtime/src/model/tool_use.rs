@@ -238,8 +238,10 @@ impl Chat for ToolUsingChat {
 
     async fn chat_stream(
         &self,
+        span: Span,
         req: CreateChatCompletionRequest,
     ) -> Result<ChatCompletionResponseStream, OpenAIError> {
+        tracing::warn!("ToolUsingChat::Chat chat_stream parent: {:?}", span);
         let mut inner_req = self.prepare_req(&req).await?;
 
         // Don't use spice runtime tools if users has explicitly chosen to not use any tools.
@@ -248,7 +250,7 @@ impl Chat for ToolUsingChat {
             .as_ref()
             .is_some_and(|c| *c == ChatCompletionToolChoiceOption::None)
         {
-            return self.inner_chat.chat_stream(inner_req).await;
+            return self.inner_chat.chat_stream(span, inner_req).await;
         };
 
         // Append spiced runtime tools to the request.
@@ -258,10 +260,12 @@ impl Chat for ToolUsingChat {
             inner_req.tools = Some(runtime_tools);
         };
 
-        let s = self.inner_chat.chat_stream(inner_req).await?;
+        tracing::info!("chat_stream: {:?}", span);
+
+        let s = self.inner_chat.chat_stream(span.clone(), inner_req).await?;
 
         Ok(make_a_stream(
-            Span::current(),
+            span,
             Self::new(
                 Arc::clone(&self.inner_chat),
                 Arc::clone(&self.rt),
@@ -473,9 +477,12 @@ fn make_a_stream(
                                 }
                             };
 
+                            let span = Span::current();
+                            tracing::info!("calling sub ai_completion after tool use: {:?}", span);
+
                             let mut new_req = req.clone();
                             new_req.messages.clone_from(&new_messages);
-                            match model.chat_stream(new_req).await {
+                            match model.chat_stream(span, new_req).await {
                                 Ok(mut s) => {
                                     while let Some(resp) = s.next().await {
                                         // TODO check if this works for choices > 1.
