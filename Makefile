@@ -197,7 +197,7 @@ docker-run:
 .PHONY: docker-local
 docker-local:
 	cp ~/.spice/bin/spiced .spiced-local-tmp
-	docker build -f Dockerfile.local -t spiceai.org/spiceai:local .
+	docker build -f Dockerfile.local -t cr.leblanc.tech/spiceai:v410 .
 	rm .spiced-local-tmp
 
 .PHONY: deps-licenses
