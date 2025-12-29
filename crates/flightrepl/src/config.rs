@@ -26,16 +26,6 @@ fn get_os_release() -> Result<String, GenericError> {
     Ok(release)
 }
 
-#[cfg(target_family = "windows")]
-fn get_os_release() -> Result<String, GenericError> {
-    use winver::WindowsVersion;
-    if let Some(version) = WindowsVersion::detect() {
-        Ok(version.to_string())
-    } else {
-        Ok("unknown".to_string())
-    }
-}
-
 pub(crate) fn get_user_agent() -> String {
     let os_type = std::env::consts::OS;
     let os_type = match os_type {
@@ -78,7 +68,7 @@ mod test {
     #[test]
     fn test_get_user_agent() {
         let matching_regex = regex::Regex::new(
-            r"flightrepl/\d+\.\d+\.\d+(-beta|-stable|-rc|-unstable)?(\.\d+)? \((Linux|Windows|Darwin)/[\d\w\.\-\_]+ (x86_64|aarch64|i386)\)",
+            r"flightrepl/\d+\.\d+\.\d+(-beta|-stable|-rc|-unstable)?(\.\d+)? \((Linux|Darwin)/[\d\w\.\-\_]+ (x86_64|aarch64|i386)\)",
         )
         .expect("regex should be constructed");
 

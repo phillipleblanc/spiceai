@@ -2084,7 +2084,6 @@ dependencies = [
 [[package]]
 name = "ballista-core"
 version = "50.0.0"
-source = "git+https://github.com/spiceai/datafusion-ballista?rev=9c17685db62a1511ecf2e90aa72b19feabdea1cb#9c17685db62a1511ecf2e90aa72b19feabdea1cb"
 dependencies = [
  "arrow",
  "arrow-flight",
@@ -2118,7 +2117,6 @@ dependencies = [
 [[package]]
 name = "ballista-executor"
 version = "50.0.0"
-source = "git+https://github.com/spiceai/datafusion-ballista?rev=9c17685db62a1511ecf2e90aa72b19feabdea1cb#9c17685db62a1511ecf2e90aa72b19feabdea1cb"
 dependencies = [
  "arrow",
  "arrow-flight",
@@ -2147,7 +2145,6 @@ dependencies = [
 [[package]]
 name = "ballista-scheduler"
 version = "50.0.0"
-source = "git+https://github.com/spiceai/datafusion-ballista?rev=9c17685db62a1511ecf2e90aa72b19feabdea1cb#9c17685db62a1511ecf2e90aa72b19feabdea1cb"
 dependencies = [
  "arrow-flight",
  "async-trait",
@@ -6541,7 +6538,6 @@ dependencies = [
  "tokio",
  "tonic 0.13.1",
  "tracing",
- "winver",
 ]
 
 [[package]]
@@ -8836,12 +8832,10 @@ version = "3.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eebcc3aff044e5944a8fbaf69eb277d11986064cba30c468730e8b9909fb551c"
 dependencies = [
- "byteorder",
  "linux-keyutils",
  "log",
  "security-framework 2.11.1",
  "security-framework 3.5.1",
- "windows-sys 0.60.2",
  "zeroize",
 ]
 
@@ -13427,7 +13421,6 @@ version = "4.9.0+2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5230dca48bc354d718269f3e4353280e188b610f7af7e2fcf54b7a79d5802872"
 dependencies = [
- "cmake",
  "libc",
  "libz-sys",
  "num_enum",
@@ -14380,7 +14373,6 @@ dependencies = [
  "spicepod",
  "tokio",
  "tracing",
- "winver",
 ]
 
 [[package]]

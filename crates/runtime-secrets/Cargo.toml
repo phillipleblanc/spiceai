@@ -31,7 +31,6 @@ aws-sdk-secretsmanager = { workspace = true, optional = true }
 aws-sdk-sts = { workspace = true, optional = true }
 keyring = { version = "3.6.3", features = [
     "apple-native",
-    "windows-native",
     "linux-native",
 ], optional = true }
 

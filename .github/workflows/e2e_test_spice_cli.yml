@@ -37,12 +37,6 @@ jobs:
                 target_os: "darwin",
                 target_arch: "aarch64",
                 target_arch_go: "arm64",
-              }, {
-                name: "Windows x64",
-                runner: "windows-latest",
-                target_os: "windows",
-                target_arch: "x86_64",
-                target_arch_go: "amd64",
               }
             ];
             return matrix;
@@ -79,33 +73,19 @@ jobs:
         if: github.event.inputs.build_cli == 'true'
         run: make -C bin/spice
 
-      - name: Make spice executable & Move spice (Unix)
-        if: matrix.target.target_os != 'windows' && github.event.inputs.build_cli == 'true'
+      - name: Make spice executable & Move spice
+        if: github.event.inputs.build_cli == 'true'
         run: |
           mv target/release/spice spice
           chmod +x spice
 
-      - name: Move Spice(Windows)
-        if: matrix.target.target_os == 'windows' && github.event.inputs.build_cli == 'true'
-        shell: pwsh
-        run: |
-          Move-Item -Path target/release/spice.exe -Destination spice.exe -Force
-
       - name: Save spice artifact
-        if: matrix.target.target_os != 'windows' && github.event.inputs.build_cli == 'true'
+        if: github.event.inputs.build_cli == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: build_${{ matrix.target.target_os }}_${{ matrix.target.target_arch }}
           path: |
             spice
-
-      - name: Save spice artifact
-        if: matrix.target.target_os == 'windows' && github.event.inputs.build_cli == 'true'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
-        with:
-          name: build_${{ matrix.target.target_os }}_${{ matrix.target.target_arch }}
-          path: |
-            spice.exe
 
   test_spice_upgrade_with_runtime:
     name: 'Test spice upgrade (${{ matrix.target.target_os }}-${{ matrix.target.target_arch }})'
@@ -134,7 +114,7 @@ jobs:
           path: ./build
 
       - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os != 'windows'
+        if: github.event.inputs.build_cli == 'false'
         run: |
           mkdir -p ./build
           cd ./build
@@ -145,30 +125,7 @@ jobs:
           rm "$output"
           chmod +x spice
 
-      - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os == 'windows'
-        run: |
-          New-Item -ItemType Directory -Force -Path "./build" > $null
-          Set-Location "./build"
-          $url = "https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spice.exe_windows_x86_64.tar.gz"
-          $output = "spice.exe_windows_x86_64.tar.gz"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          tar -xzf $output
-          Remove-Item $output
-
-      - name: Download a older spiced
-        shell: pwsh
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Set-Location "./build"
-          $url = "https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spiced.exe_windows_x86_64.tar.gz"
-          $output = "spiced.exe_windows_x86_64.tar.gz"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          tar -xzf $output
-          Remove-Item $output
-
       - name: Download older spiced
-        if: matrix.target.target_os != 'windows'
         run: |
           cd ./build
           url="https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spiced_${{ matrix.target.target_os }}_${{ matrix.target.target_arch }}.tar.gz"
@@ -187,28 +144,6 @@ jobs:
         run: |
           spice upgrade
 
-      - name: Check the temp directory (Windows)
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Write-Host "System temp directory: $env:TEMP"
-          Get-ChildItem -Path $env:TEMP -Recurse |
-              Where-Object { $_.Name -like "spice*" } |
-              Select-Object FullName, Length, LastWriteTime |
-              Format-Table -AutoSize
-
-      - name: Run spice upgrade again
-        if: matrix.target.target_os == 'windows'
-        run: |
-          spice upgrade
-
-      - name: Check the temp directory (Windows)
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Write-Host "System temp directory: $env:TEMP"
-          Get-ChildItem -Path $env:TEMP -Recurse |
-              Where-Object { $_.Name -like "spice*" } |
-              Select-Object FullName, Length, LastWriteTime |
-              Format-Table -AutoSize
 
   test_spice_upgrade_without_runtime:
     name: 'Test spice upgrade without runtime (${{ matrix.target.target_os }}-${{ matrix.target.target_arch }})'
@@ -237,7 +172,7 @@ jobs:
           path: ./build
 
       - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os != 'windows'
+        if: github.event.inputs.build_cli == 'false'
         run: |
           mkdir -p ./build
           cd ./build
@@ -248,17 +183,6 @@ jobs:
           rm "$output"
           chmod +x spice
 
-      - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os == 'windows'
-        run: |
-          New-Item -ItemType Directory -Force -Path "./build" > $null
-          Set-Location "./build"
-          $url = "https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spice.exe_windows_x86_64.tar.gz"
-          $output = "spice.exe_windows_x86_64.tar.gz"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          tar -xzf $output
-          Remove-Item $output
-
       - name: Install Spice CLI
         uses: ./.github/actions/install-spice-cli
         with:
@@ -268,28 +192,6 @@ jobs:
         run: |
           spice upgrade
 
-      - name: Check the temp directory (Windows)
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Write-Host "System temp directory: $env:TEMP"
-          Get-ChildItem -Path $env:TEMP -Recurse |
-              Where-Object { $_.Name -like "spice*" } |
-              Select-Object FullName, Length, LastWriteTime |
-              Format-Table -AutoSize
-
-      - name: Run spice upgrade again
-        if: matrix.target.target_os == 'windows'
-        run: |
-          spice upgrade
-
-      - name: Check the temp directory (Windows)
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Write-Host "System temp directory: $env:TEMP"
-          Get-ChildItem -Path $env:TEMP -Recurse |
-              Where-Object { $_.Name -like "spice*" } |
-              Select-Object FullName, Length, LastWriteTime |
-              Format-Table -AutoSize
 
   test_spice_install_without_runtime:
     name: 'Test spice install without runtime (${{ matrix.target.target_os }}-${{ matrix.target.target_arch }})'
@@ -318,7 +220,7 @@ jobs:
           path: ./build
 
       - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os != 'windows'
+        if: github.event.inputs.build_cli == 'false'
         run: |
           mkdir -p ./build
           cd ./build
@@ -328,17 +230,6 @@ jobs:
           tar -xzf "$output"
           rm "$output"
           chmod +x spice
-
-      - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os == 'windows'
-        run: |
-          New-Item -ItemType Directory -Force -Path "./build" > $null
-          Set-Location "./build"
-          $url = "https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spice.exe_windows_x86_64.tar.gz"
-          $output = "spice.exe_windows_x86_64.tar.gz"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          tar -xzf $output
-          Remove-Item $output
 
       - name: Install Spice CLI
         uses: ./.github/actions/install-spice-cli
@@ -380,7 +271,7 @@ jobs:
           path: ./build
 
       - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os != 'windows'
+        if: github.event.inputs.build_cli == 'false'
         run: |
           mkdir -p ./build
           cd ./build
@@ -391,48 +282,22 @@ jobs:
           rm "$output"
           chmod +x spice
 
-      - name: download spice cli released version
-        if: github.event.inputs.build_cli == 'false' && matrix.target.target_os == 'windows'
-        run: |
-          New-Item -ItemType Directory -Force -Path "./build" > $null
-          Set-Location "./build"
-          $url = "https://github.com/spiceai/spiceai/releases/download/v${{ env.REL_VERSION }}/spice.exe_windows_x86_64.tar.gz"
-          $output = "spice.exe_windows_x86_64.tar.gz"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          tar -xzf $output
-          Remove-Item $output
-
       - name: Install Spice CLI
         uses: ./.github/actions/install-spice-cli
         with:
           build-path: ./build
 
       - name: Start spice runtime
-        if: matrix.target.target_os != 'windows'
         run: |
           spice run &> spice.log &
           # time to download runtime
           sleep 60
 
-      - name: Start spice runtime
-        if: matrix.target.target_os == 'windows'
-        run: |
-          Start-Process spice -ArgumentList "run" -NoNewWindow -RedirectStandardOutput "spice.stdout.log" -RedirectStandardError "spice.stderr.log"
-          # time to download runtime
-          Start-Sleep -Seconds 60
-
       - name: Stop spice and check logs
-        if: always() && matrix.target.target_os != 'windows'
+        if: always()
         run: |
           killall spice || true
           cat spice.log
-
-      - name: Stop spice and check logs
-        if: always() && matrix.target.target_os == 'windows'
-        shell: pwsh
-        run: |
-          Get-Process -Name spice -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-          Get-Content spice.stdout.log, spice.stderr.log
 
       - name: Run spice version
         run: |

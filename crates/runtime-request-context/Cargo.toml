@@ -22,6 +22,3 @@ runtime-auth = { path = "../runtime-auth" }
 spicepod = { path = "../spicepod" }
 tokio.workspace = true
 tracing.workspace = true
-
-[target.'cfg(windows)'.dependencies]
-winver = "1.0.0"
