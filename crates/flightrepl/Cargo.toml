@@ -34,9 +34,6 @@ tonic = { workspace = true, features = [
 ] }
 tracing.workspace = true
 
-[target.'cfg(windows)'.dependencies]
-winver = "1.0.0"
-
 [dev-dependencies]
 insta.workspace = true
 regex.workspace = true

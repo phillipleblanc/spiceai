@@ -370,6 +370,10 @@ func (c *RuntimeContext) InstallMatchingRuntime(flavor constants.Flavor, allowAc
 		return err
 	}
 
+	if err := c.ensureWindowsRuntimeSupport(release.TagName, flavor); err != nil {
+		return err
+	}
+
 	slog.Info(fmt.Sprintf("Downloading and installing Spice.ai Runtime %s ...\n", release.TagName))
 
 	err = github.DownloadRuntimeAsset(flavor, release, c.spiceBinDir, allowAccelerator)
@@ -400,6 +404,10 @@ func (c *RuntimeContext) InstallSpecificRuntime(version string, flavor constants
 	// Install runtime for the specified version
 	release, err := github.GetRuntimeRelease(version)
 	if err != nil {
+		return err
+	}
+
+	if err := c.ensureWindowsRuntimeSupport(release.TagName, flavor); err != nil {
 		return err
 	}
 
@@ -445,6 +453,10 @@ func (c *RuntimeContext) InstallSpecificVersion(version string, flavor constants
 	// Install runtime for the specified version
 	release, err := github.GetRuntimeRelease(version)
 	if err != nil {
+		return err
+	}
+
+	if err := c.ensureWindowsRuntimeSupport(release.TagName, flavor); err != nil {
 		return err
 	}
 

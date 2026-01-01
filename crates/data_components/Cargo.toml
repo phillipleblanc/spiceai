@@ -100,9 +100,6 @@ uuid.workspace = true
 zip = "3.0.0"
 tokio-stream.workspace = true
 
-[target.'cfg(windows)'.dependencies]
-rdkafka = { workspace = true, features = ["cmake-build"], optional = true }
-
 [features]
 bench = [] # Feature for benchmarking that exposes internal functions
 clickhouse = ["dep:clickhouse-rs", "datafusion-table-providers/federation"]
