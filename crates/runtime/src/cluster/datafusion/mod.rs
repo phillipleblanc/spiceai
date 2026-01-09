@@ -27,18 +27,33 @@ pub mod codec;
 pub mod datafusion_scheduler_ext;
 
 #[must_use]
-pub fn datafusion_and_cluster_physical_optimizers()
--> Vec<Arc<dyn PhysicalOptimizerRule + Send + Sync>> {
+pub fn datafusion_and_cluster_physical_optimizers(
+    enable_distribute_file_scan_optimizer: bool,
+    enable_union_projection_pushdown_optimizer: bool,
+) -> Vec<Arc<dyn PhysicalOptimizerRule + Send + Sync>> {
     let mut rules = PhysicalOptimizer::new().rules;
-    rules.extend(cluster_physical_optimizers());
+    rules.extend(cluster_physical_optimizers(
+        enable_distribute_file_scan_optimizer,
+        enable_union_projection_pushdown_optimizer,
+    ));
     rules
 }
 
 #[must_use]
-fn cluster_physical_optimizers() -> Vec<Arc<dyn PhysicalOptimizerRule + Send + Sync>> {
-    vec![
-        EnsureSupportedFileScan::new(),
-        DistributeFileScanOptimizer::new(),
-        UnionProjectionPushdownOptimizer::new(),
-    ]
+fn cluster_physical_optimizers(
+    enable_distribute_file_scan_optimizer: bool,
+    enable_union_projection_pushdown_optimizer: bool,
+) -> Vec<Arc<dyn PhysicalOptimizerRule + Send + Sync>> {
+    let mut rules: Vec<Arc<dyn PhysicalOptimizerRule + Send + Sync>> =
+        vec![EnsureSupportedFileScan::new()];
+
+    if enable_distribute_file_scan_optimizer {
+        rules.push(DistributeFileScanOptimizer::new());
+    }
+
+    if enable_union_projection_pushdown_optimizer {
+        rules.push(UnionProjectionPushdownOptimizer::new());
+    }
+
+    rules
 }

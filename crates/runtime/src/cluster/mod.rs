@@ -650,6 +650,14 @@ async fn create_scheduler_server(
     rt: &Arc<Runtime>,
 ) -> crate::Result<SchedulerServer<LogicalPlanNode, PhysicalPlanNode>> {
     let bind_addr = rt.df.cluster_config.node_bind_address();
+    let (enable_distribute_file_scan_optimizer, enable_union_projection_pushdown_optimizer) = {
+        let app_handle = rt.app();
+        let app = app_handle.read().await;
+        (
+            App::get_runtime_param(&*app, "cluster_distribute_file_scan_optimizer", true),
+            App::get_runtime_param(&*app, "cluster_union_projection_pushdown_optimizer", true),
+        )
+    };
 
     // Bind Spice Datafusion configuration incl SpiceQueryPlanner as bound in `DataFusionBuilder`
     let current_context = Arc::clone(&rt.df.ctx);
@@ -683,7 +691,10 @@ async fn create_scheduler_server(
                 SessionStateBuilder::new_from_existing(current_context.as_ref().state())
                     .with_config(cfg)
                     .with_runtime_env(default_runtime_env(io_runtime.clone()))
-                    .with_physical_optimizer_rules(datafusion_and_cluster_physical_optimizers())
+                    .with_physical_optimizer_rules(datafusion_and_cluster_physical_optimizers(
+                        enable_distribute_file_scan_optimizer,
+                        enable_union_projection_pushdown_optimizer,
+                    ))
                     .build(),
             )
         })),
