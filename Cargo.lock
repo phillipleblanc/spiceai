@@ -3671,6 +3671,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "connector-flightsql"
+version = "1.11.0-unstable"
+dependencies = [
+ "arrow",
+ "arrow-flight",
+ "async-trait",
+ "data_components",
+ "datafusion",
+ "flight_client",
+ "linkme",
+ "paste",
+ "runtime",
+ "snafu",
+]
+
+[[package]]
 name = "connector-mongodb"
 version = "1.11.0-unstable"
 dependencies = [
@@ -16208,6 +16224,7 @@ dependencies = [
  "clap 4.5.54",
  "connector-clickhouse",
  "connector-duckdb",
+ "connector-flightsql",
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",
@@ -16285,6 +16302,7 @@ version = "1.11.0-unstable"
 dependencies = [
  "connector-clickhouse",
  "connector-duckdb",
+ "connector-flightsql",
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",
