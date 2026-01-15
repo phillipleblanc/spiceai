@@ -3637,6 +3637,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "510ca239cf13b7f8d16a2b48f263de7b4f8c566f0af58d901031473c76afb1e3"
 
 [[package]]
+name = "connector-mysql"
+version = "1.11.0-unstable"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "datafusion",
+ "datafusion-table-providers",
+ "linkme",
+ "mysql_async",
+ "opentelemetry 0.29.1",
+ "paste",
+ "runtime",
+ "secrecy",
+ "snafu",
+ "tracing",
+]
+
+[[package]]
 name = "connector-postgres"
 version = "1.11.0-unstable"
 dependencies = [
@@ -16058,6 +16076,7 @@ version = "1.11.0-unstable"
 dependencies = [
  "app",
  "clap 4.5.54",
+ "connector-mysql",
  "connector-postgres",
  "event_stream",
  "flightrepl",
@@ -16126,6 +16145,8 @@ dependencies = [
 name = "spicepodschema"
 version = "1.11.0-unstable"
 dependencies = [
+ "connector-mysql",
+ "connector-postgres",
  "regex",
  "runtime",
  "runtime-parameters",
