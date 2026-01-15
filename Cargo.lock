@@ -3750,6 +3750,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "connector-scylladb"
+version = "1.11.0-unstable"
+dependencies = [
+ "async-trait",
+ "data_components",
+ "datafusion",
+ "db_connection_pool",
+ "linkme",
+ "ns_lookup",
+ "paste",
+ "runtime",
+ "runtime-parameters",
+ "scylla",
+ "snafu",
+ "tracing",
+]
+
+[[package]]
 name = "connector-snowflake"
 version = "1.11.0-unstable"
 dependencies = [
@@ -16195,6 +16213,7 @@ dependencies = [
  "connector-mysql",
  "connector-oracle",
  "connector-postgres",
+ "connector-scylladb",
  "connector-snowflake",
  "connector-spark",
  "event_stream",
@@ -16271,6 +16290,7 @@ dependencies = [
  "connector-mysql",
  "connector-oracle",
  "connector-postgres",
+ "connector-scylladb",
  "connector-snowflake",
  "connector-spark",
  "regex",
