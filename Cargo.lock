@@ -3733,6 +3733,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "connector-imap"
+version = "1.11.0-unstable"
+dependencies = [
+ "async-trait",
+ "data_components",
+ "datafusion",
+ "imap",
+ "linkme",
+ "paste",
+ "regex",
+ "runtime",
+ "secrecy",
+ "snafu",
+]
+
+[[package]]
 name = "connector-mongodb"
 version = "1.11.0-unstable"
 dependencies = [
@@ -16302,6 +16318,7 @@ dependencies = [
  "connector-duckdb",
  "connector-flightsql",
  "connector-ftp",
+ "connector-imap",
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",
@@ -16385,6 +16402,7 @@ dependencies = [
  "connector-duckdb",
  "connector-flightsql",
  "connector-ftp",
+ "connector-imap",
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",

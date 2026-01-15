@@ -153,8 +153,6 @@ pub const ODBC_DATACONNECTOR: &str = "odbc"; // const needs to be accessible whe
 pub mod deferred;
 pub mod glue;
 pub mod iceberg;
-#[cfg(feature = "imap")]
-pub mod imap;
 pub mod parameters;
 pub mod s3;
 pub mod sink;
