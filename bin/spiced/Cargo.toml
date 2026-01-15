@@ -11,6 +11,7 @@ version.workspace = true
 [dependencies]
 app = { path = "../../crates/app" }
 clap = { workspace = true, features = ["derive"] }
+connector-postgres = { path = "../../crates/data-connectors/connector-postgres", optional = true }
 event_stream = { path = "../../crates/event_stream" }
 flightrepl = { path = "../../crates/flightrepl" }
 futures.workspace = true
@@ -103,7 +104,7 @@ mysql = ["runtime/mysql"]
 nfs = ["runtime/nfs"]
 odbc = ["runtime/odbc"]
 oracle = ["runtime/oracle"]
-postgres = ["runtime/postgres"]
+postgres = ["connector-postgres", "runtime/postgres"]
 postgres-write = ["runtime/postgres-write"]
 release = []
 scylladb = ["runtime/scylladb"]
