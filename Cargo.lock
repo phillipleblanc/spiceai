@@ -3921,6 +3921,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "connector-smb"
+version = "1.11.0-unstable"
+dependencies = [
+ "linkme",
+ "paste",
+ "runtime",
+ "snafu",
+ "tokio",
+ "url",
+]
+
+[[package]]
 name = "connector-snowflake"
 version = "1.11.0-unstable"
 dependencies = [
@@ -16450,6 +16462,7 @@ dependencies = [
  "connector-scylladb",
  "connector-sftp",
  "connector-sharepoint",
+ "connector-smb",
  "connector-snowflake",
  "connector-spark",
  "event_stream",
@@ -16536,6 +16549,7 @@ dependencies = [
  "connector-scylladb",
  "connector-sftp",
  "connector-sharepoint",
+ "connector-smb",
  "connector-snowflake",
  "connector-spark",
  "regex",
