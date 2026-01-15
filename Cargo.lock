@@ -3832,15 +3832,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "connector-nfs"
+name = "connector-odbc"
 version = "1.11.0-unstable"
 dependencies = [
+ "async-trait",
+ "data_components",
+ "datafusion",
+ "db_connection_pool",
  "linkme",
  "paste",
  "runtime",
  "snafu",
- "tokio",
- "url",
+ "tracing",
 ]
 
 [[package]]
@@ -14434,7 +14437,6 @@ dependencies = [
  "chrono",
  "chunking",
  "clap 4.5.54",
- "clickhouse-rs",
  "criterion 0.7.0",
  "csv",
  "dashmap",
@@ -14462,7 +14464,6 @@ dependencies = [
  "gethostname",
  "globset",
  "governor",
- "graph-rs-sdk",
  "graphql-parser",
  "headers-accept",
  "hf-hub",
@@ -14475,7 +14476,6 @@ dependencies = [
  "iceberg-catalog-glue",
  "iceberg-catalog-rest",
  "iceberg-datafusion",
- "imap",
  "indexmap 2.13.0",
  "insta",
  "itertools 0.14.0",
@@ -14486,8 +14486,6 @@ dependencies = [
  "mediatype",
  "model_components",
  "moka",
- "mongodb",
- "mysql_async",
  "notify",
  "ns_lookup",
  "object_store",
@@ -14534,14 +14532,12 @@ dependencies = [
  "scheduler",
  "schemars 1.2.0",
  "scopeguard",
- "scylla",
  "search",
  "secrecy",
  "serde",
  "serde_json",
  "serde_yaml",
  "snafu",
- "snowflake-api",
  "spice-cloud",
  "spiceai",
  "spicepod",
@@ -14551,7 +14547,6 @@ dependencies = [
  "tempfile",
  "tera",
  "test-framework",
- "tiberius",
  "token_provider",
  "tokio",
  "tokio-rusqlite",
@@ -16456,7 +16451,7 @@ dependencies = [
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",
- "connector-nfs",
+ "connector-odbc",
  "connector-oracle",
  "connector-postgres",
  "connector-scylladb",
@@ -16543,7 +16538,6 @@ dependencies = [
  "connector-mongodb",
  "connector-mssql",
  "connector-mysql",
- "connector-nfs",
  "connector-oracle",
  "connector-postgres",
  "connector-scylladb",
