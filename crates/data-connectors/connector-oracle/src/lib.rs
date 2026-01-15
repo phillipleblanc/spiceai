@@ -1,5 +1,5 @@
 /*
-Copyright 2024-2025 The Spice.ai OSS Authors
+Copyright 2026 The Spice.ai OSS Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-use crate::{component::dataset::Dataset, register_data_connector};
+//! Oracle data connector for Spice.ai runtime.
+//!
+//! This crate provides the Oracle connector implementation, allowing
+//! Spice.ai to connect to Oracle databases as data sources.
+//!
+//! This connector is extracted from the runtime crate to enable faster
+//! incremental builds - changes to this connector only require rebuilding
+//! this crate, not the entire runtime.
+
 use async_trait::async_trait;
 use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
@@ -24,17 +32,20 @@ use data_components::oracle::connection::{
 };
 use datafusion::datasource::TableProvider;
 use once_cell::sync::OnceCell;
+use runtime::component::dataset::Dataset;
+use runtime::dataconnector::{
+    ConnectorComponent, ConnectorParams, DataConnector, DataConnectorFactory, DataConnectorResult,
+};
+use runtime::parameters::ParameterSpec;
+use runtime::register_data_connector;
+use runtime_parameters::Parameters;
 use snafu::{ResultExt, Snafu};
+use std::any::Any;
 use std::fs;
+use std::future::Future;
 use std::path::Path;
 use std::pin::Pin;
 use std::sync::Arc;
-use std::{any::Any, future::Future};
-
-use super::{
-    ConnectorComponent, ConnectorParams, DataConnector, DataConnectorFactory, DataConnectorResult,
-    ParameterSpec, Parameters, UnableToGetReadProviderSnafu,
-};
 
 const DEFAULT_WALLET_PATH: &str = ".oracle";
 
@@ -91,6 +102,7 @@ const PARAMETERS: &[ParameterSpec] = &[
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
+/// Oracle data connector.
 #[derive(Debug)]
 pub struct Oracle {
     conn: Arc<OracleConnectionPool>,
@@ -211,6 +223,7 @@ impl Oracle {
     }
 }
 
+/// Factory for creating Oracle connector instances.
 #[derive(Default, Copy, Clone)]
 pub struct OracleFactory {}
 
@@ -234,7 +247,7 @@ impl DataConnectorFactory for OracleFactory {
     fn create(
         &self,
         params: ConnectorParams,
-    ) -> Pin<Box<dyn Future<Output = super::NewDataConnectorResult> + Send>> {
+    ) -> Pin<Box<dyn Future<Output = runtime::dataconnector::NewDataConnectorResult> + Send>> {
         Box::pin(async move {
             Ok(Arc::new(Oracle::new(&params.parameters).await?) as Arc<dyn DataConnector>)
         })
@@ -246,6 +259,34 @@ impl DataConnectorFactory for OracleFactory {
 
     fn parameters(&self) -> &'static [ParameterSpec] {
         PARAMETERS
+    }
+}
+
+register_data_connector!("oracle", OracleFactory);
+
+#[derive(Debug, Snafu)]
+enum ReadProviderError {
+    #[snafu(display("Unable to get read provider for {dataconnector}: {source}"))]
+    UnableToGetReadProvider {
+        dataconnector: &'static str,
+        connector_component: ConnectorComponent,
+        source: Box<dyn std::error::Error + Send + Sync>,
+    },
+}
+
+impl From<ReadProviderError> for runtime::dataconnector::DataConnectorError {
+    fn from(err: ReadProviderError) -> Self {
+        match err {
+            ReadProviderError::UnableToGetReadProvider {
+                dataconnector,
+                connector_component,
+                source,
+            } => runtime::dataconnector::DataConnectorError::UnableToGetReadProvider {
+                dataconnector: dataconnector.to_string(),
+                connector_component,
+                source,
+            },
+        }
     }
 }
 
@@ -270,5 +311,3 @@ impl DataConnector for Oracle {
         Ok(Arc::new(provider))
     }
 }
-
-register_data_connector!("oracle", OracleFactory);
