@@ -37,6 +37,7 @@ runtime = { path = "../../crates/runtime", features = [
     "oracle",
     "postgres",
     "scylladb",
+    "sftp",
     "sharepoint",
     "snowflake",
     "spark",
@@ -59,6 +60,7 @@ connector-mysql = { path = "../../crates/data-connectors/connector-mysql" }
 connector-oracle = { path = "../../crates/data-connectors/connector-oracle" }
 connector-postgres = { path = "../../crates/data-connectors/connector-postgres" }
 connector-scylladb = { path = "../../crates/data-connectors/connector-scylladb" }
+connector-sftp = { path = "../../crates/data-connectors/connector-sftp" }
 connector-sharepoint = { path = "../../crates/data-connectors/connector-sharepoint" }
 connector-snowflake = { path = "../../crates/data-connectors/connector-snowflake" }
 connector-spark = { path = "../../crates/data-connectors/connector-spark" }
